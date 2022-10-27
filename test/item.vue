@@ -8,7 +8,7 @@
 
 <script>
 export default {
-  name: 'item',
+  name: 'TestItem',
 
   props: {
     index: {
@@ -16,7 +16,7 @@ export default {
     },
     source: {
       type: Object,
-      default () {
+      default() {
         return {}
       }
     },

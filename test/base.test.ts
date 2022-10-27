@@ -4,7 +4,7 @@ import { VirtualProps } from '../src/props'
 import Item from './item.vue'
 import { getDatas } from './util'
 
-describe('element', () => {
+describe('base', () => {
   const Instance = mount({
     name: 'test',
     components: {
@@ -16,24 +16,13 @@ describe('element', () => {
           :data-key="'id'"
           :data-sources="items"
           :data-component="item"
-          :root-tag="'article'"
-          :wrap-tag="'section'"
-          :wrap-class="'wrap-class-aaa'"
-          :item-tag="'p'"
-          :item-class="'item-class-bbb'"
-          :item-class-add="addItemClass"
         />
       </div>
     `,
-    data () {
+    data() {
       return {
         items: getDatas(1000),
         item: Item
-      }
-    },
-    methods: {
-      addItemClass (index) {
-        return 'extra-item-' + index
       }
     }
   })
@@ -45,11 +34,11 @@ describe('element', () => {
     expect(Instance.find('.my-list').exists()).toBe(true)
   })
 
-  it('check element tag and class', () => {
+  it('check list build by default', () => {
     const vmData = Instance.vm.$data
     const vslVm = Instance.find('.my-list').vm
     const rootEl = vslVm.$el
-    expect(rootEl.tagName.toLowerCase()).toBe('article')
+    expect(rootEl.tagName.toLowerCase()).toBe(VirtualProps.rootTag.default)
 
     const wrapperEl = rootEl.firstElementChild
 
@@ -57,8 +46,7 @@ describe('element', () => {
     expect(wrapperEl.getAttribute('role')).toBe('group')
     expect(!!rootEl.style.padding).toBe(false)
     expect(!!wrapperEl.style.padding).toBe(true)
-    expect(wrapperEl.className).toBe('wrap-class-aaa')
-    expect(wrapperEl.tagName.toLowerCase()).toBe('section')
+    expect(wrapperEl.tagName.toLowerCase()).toBe(VirtualProps.wrapTag.default)
 
     // render number keeps by default
     expect(wrapperEl.childNodes.length).toBe(VirtualProps.keeps.default)
@@ -66,8 +54,8 @@ describe('element', () => {
     // items render content
     for (let i = 0; i < wrapperEl.childNodes.length; i++) {
       const itemEl = wrapperEl.childNodes[i]
-      expect(itemEl.className).toBe(`item-class-bbb extra-item-${i}`)
-      expect(itemEl.tagName.toLowerCase()).toBe('p')
+      expect(itemEl.className).toBe('')
+      expect(itemEl.tagName.toLowerCase()).toBe(VirtualProps.itemTag.default)
 
       // item inner render (see ./item.vue)
       const itemInnerEl = itemEl.firstElementChild
